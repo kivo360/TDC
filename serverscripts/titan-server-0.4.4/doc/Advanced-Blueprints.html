@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Advanced Blueprints</title>
+    <link rel="stylesheet" href="./css/screen.css" type="text/css" charset="utf-8" />
+    <link rel="stylesheet" href="./css/gollum.css" type="text/css" charset="utf-8" />
+    <link rel="stylesheet" href="./css/syntax.css" type="text/css" charset="utf-8" />
+    <script src="./javascript/jquery-1.4.2.min.js" type="text/javascript"></script>
+    <script src="./javascript/jquery.text_selection-1.0.0.min.js" type="text/javascript"></script>
+    <script src="./javascript/jquery.previewable_comment_form.js" type="text/javascript"></script>
+    <script src="./javascript/jquery.tabs.js" type="text/javascript"></script>
+    <script src="./javascript/gollum.js" type="text/javascript"></script>
+  </head>
+
+  <body>
+    <div id="main">
+      <div class="site">
+        <div id="guides">
+          <div class="guide">
+            <div class="main">
+              <div class="actions">
+                <div>
+                  <a href="./Home.html">Aurelius Titan</a>
+                </div>
+              </div>
+              <h1>Advanced Blueprints</h1>
+              <div class="content wikistyle gollum textile">
+                <p><img src="https://raw.github.com/tinkerpop/blueprints/master/doc/images/blueprints-character-3.png" width="100px"></p>
+<p><a href="http://blueprints.tinkerpop.com">Blueprints</a> provides a set of common property graph interfaces by which any vendor can implement and leverage the <a href="http://tinkerpop.com">TinkerPop</a> stack of technologies. Within Blueprints, there are other utilities that are generally useful like import/export formats as well graph wrappers.</p>
+<h2>Using IdGraph</h2>
+<p>It is possible to use Blueprints’ <a href="https://github.com/tinkerpop/blueprints/wiki/Id-Implementation">IdGraph</a> with Titan. However, it is best to prepare Titan for IdGraph by declaring the <code>__id</code> index using <code>TitanGraph.makeType()</code>, and furthermore, it is <em>necessary</em> if you intend to use IdGraph for user-specified ids on <em>both</em> vertices and edges.  Use the appropriate data type (e.g. <code>String.class</code> for the ids you intend to use):</p>
+<div class="highlight">
+<pre>gremlin&gt; g = TitanFactory.open("/tmp/test")
+==&gt;titangraph[local:/tmp/test]
+gremlin&gt; g.makeKey(IdGraph.ID).single().unique().indexed(Vertex.class).indexed(Edge.class).dataType(String.class).make()
+==&gt;__id
+gremlin&gt; ig = new IdGraph(g)
+==&gt;idgraph[titangraph[local:/tmp/test]]
+gremlin&gt; hercules = ig.addVertex("hercules")
+==&gt;v[hercules]
+gremlin&gt; g.v("hercules")
+==&gt;null
+gremlin&gt; zeus = ig.addVertex("zeus")
+==&gt;v[zeus]
+gremlin&gt; ig.addEdge("hercules-father", hercules, zeus, "father");
+==&gt;e[hercules-father][hercules-father-&gt;zeus]
+</pre>
+</div>
+
+<p>If only user defined ids on vertices (or edges) is needed, then use one of the overloaded <code>IdGraph</code> constructors.  It is still helpful, although not strictly necessary, to define an index:</p>
+<div class="highlight">
+<pre>gremlin&gt; g = TitanFactory.open("/tmp/test")
+==&gt;titangraph[local:/tmp/test]
+gremlin&gt; g.makeKey(IdGraph.ID).single().unique().indexed(Vertex.class).dataType(String.class).make()
+==&gt;__id
+gremlin&gt; ig = new IdGraph(g, true, false)  // true for vertices, false for edges
+==&gt;idgraph[titangraph[local:/tmp/test]]
+gremlin&gt; hercules = ig.addVertex("hercules")
+==&gt;v[hercules]
+gremlin&gt; g.v("hercules")
+==&gt;null
+gremlin&gt; zeus = ig.addVertex("zeus")
+==&gt;v[zeus]
+gremlin&gt; ig.addEdge("hercules-father", hercules, zeus, "father");
+==&gt;e[11-4-1o][hercules-father-&gt;zeus]
+</pre>
+</div>
+
+              </div>
+            </div>
+          </div>
+          <div class="admin">
+            <div style="float: left;">
+              <small>Last edited by <b>Dan LaRocque</b>, 2014-04-22 09:02:35</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
